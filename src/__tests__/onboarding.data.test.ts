@@ -1,66 +1,61 @@
-import {
-  GetStartedData,
-  Slide1Data,
-  Slide2Data,
-  PaywallData,
-  DotsData,
-} from '@/data/onboarding.data';
+import { stepOneData, stepTwoData, stepThreeData } from '@/data/onboarding.data';
 
-describe('GetStartedData', () => {
+describe('stepOneData', () => {
   it('has the correct title parts', () => {
-    expect(GetStartedData.title.regular).toBe('Welcome to ');
-    expect(GetStartedData.title.bold).toBe('PlantApp');
+    expect(stepOneData.title.regular).toBe('Welcome to ');
+    expect(stepOneData.title.bold).toBe('PlantApp');
   });
 
   it('button text is "Get Started"', () => {
-    expect(GetStartedData.button.text).toBe('Get Started');
+    expect(stepOneData.button).toBe('Get Started');
   });
 
-  it('has a subtitle text', () => {
-    expect(GetStartedData.subtitle.text.length).toBeGreaterThan(0);
-  });
-});
-
-describe('Slide1Data & Slide2Data', () => {
-  it('both slides have "Continue" button text', () => {
-    expect(Slide1Data.button.text).toBe('Continue');
-    expect(Slide2Data.button.text).toBe('Continue');
+  it('has a non-empty subtitle', () => {
+    expect(stepOneData.subtitle.length).toBeGreaterThan(0);
   });
 
-  it('both slides share the same primary button color', () => {
-    expect(Slide1Data.button.backgroundColor).toBe(Slide2Data.button.backgroundColor);
-  });
-});
-
-describe('PaywallData', () => {
-  it('has exactly two plan options', () => {
-    expect(PaywallData.plans).toHaveLength(2);
+  it('has legal prefix and two link labels', () => {
+    expect(stepOneData.legal.prefix.length).toBeGreaterThan(0);
+    expect(stepOneData.legal.link1.length).toBeGreaterThan(0);
+    expect(stepOneData.legal.link2.length).toBeGreaterThan(0);
   });
 
-  it('each plan has an id, period, and description', () => {
-    for (const plan of PaywallData.plans) {
-      expect(plan.id).toBeTruthy();
-      expect(plan.period).toBeTruthy();
-      expect(plan.description).toBeTruthy();
-    }
-  });
-
-  it('the yearly plan has a "Save 50%" badge', () => {
-    const yearly = PaywallData.plans.find((p) => p.id === 'year');
-    expect(yearly?.badge).toBe('Save 50%');
-  });
-
-  it('close button shows after 2 seconds', () => {
-    expect(PaywallData.closeButton.showAfterMs).toBe(2000);
+  it('has an image source', () => {
+    expect(stepOneData.image).toBeTruthy();
   });
 });
 
-describe('DotsData', () => {
-  it('total is 2 (slides 1 and 2 only)', () => {
-    expect(DotsData.total).toBe(2);
+describe('stepTwoData', () => {
+  it('button text is "Continue"', () => {
+    expect(stepTwoData.button).toBe('Continue');
   });
 
-  it('active dot is larger than inactive dot', () => {
-    expect(DotsData.activeDotSize).toBeGreaterThan(DotsData.inactiveDotSize);
+  it('has all three title parts', () => {
+    expect(stepTwoData.title.part1.length).toBeGreaterThan(0);
+    expect(stepTwoData.title.bold.length).toBeGreaterThan(0);
+    expect(stepTwoData.title.part2.length).toBeGreaterThan(0);
+  });
+
+  it('has an image source', () => {
+    expect(stepTwoData.image).toBeTruthy();
+  });
+});
+
+describe('stepThreeData', () => {
+  it('button text is "Continue"', () => {
+    expect(stepThreeData.button).toBe('Continue');
+  });
+
+  it('has both title parts', () => {
+    expect(stepThreeData.title.part1.length).toBeGreaterThan(0);
+    expect(stepThreeData.title.bold.length).toBeGreaterThan(0);
+  });
+
+  it('has an image source', () => {
+    expect(stepThreeData.image).toBeTruthy();
+  });
+
+  it('steps two and three share the same button text', () => {
+    expect(stepTwoData.button).toBe(stepThreeData.button);
   });
 });
