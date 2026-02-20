@@ -1,50 +1,129 @@
-# Welcome to your Expo app 👋
+# PlantApp
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native (Expo) mobile app for plant identification and care.
 
-## Get started
+---
 
-1. Install dependencies
+## Prerequisites
 
-   ```bash
-   npm install
-   ```
+- Node.js 18+
+- Xcode (iOS) or Android Studio (Android)
+- [EAS CLI](https://docs.expo.dev/eas/) — optional, for builds
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Setup
 
 ```bash
-npm run reset-project
+git clone <repo-url>
+cd plant-app
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+> **Note:** This project uses native modules (MMKV, Reanimated, Sensors). It does **not** run in Expo Go — you need a development build.
 
-## Learn more
+### iOS
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npx expo run:ios
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Android
 
-## Join the community
+```bash
+npx expo run:android
+```
 
-Join our community of developers creating universal apps.
+---
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Project Structure
+
+```
+src/
+├── app/                  # Expo Router screens
+│   ├── _layout.tsx       # Root layout (Redux, fonts, onboarding modal)
+│   └── (tabs)/           # Tab navigation (Home, Diagnose, Scanner, My Garden, Profile)
+├── screens/              # Screen components
+│   ├── home/
+│   └── onboarding/       # Onboarding + Paywall screens
+├── components/
+│   ├── onboarding/       # OnboardingDots
+│   └── ui/               # Shared UI (gradient-text)
+├── hooks/
+│   ├── use-fonts.ts      # Font loading
+│   └── use-shake.ts      # Shake detection via expo-sensors
+├── lib/
+│   └── storage.ts        # MMKV persistent storage
+├── store/
+│   ├── index.ts          # Redux store
+│   └── api/plant-api.ts  # RTK Query endpoints
+├── theme/                # Colors, typography, spacing, radius, shadows
+└── types/                # API types
+```
+
+---
+
+## Screens
+
+| Screen | Status |
+|---|---|
+| Onboarding (3 steps) | Implemented |
+| Paywall | Implemented (subscription logic pending) |
+| Home | Implemented |
+| Diagnose | Placeholder |
+| Scanner | Placeholder |
+| My Garden | Placeholder |
+| Profile | Placeholder |
+
+---
+
+## Onboarding Flow
+
+Onboarding runs as a `Modal` on top of the app at the root layout level. On first launch the modal is visible; once the user completes the paywall step it is dismissed and `onboarding.completed` is persisted via MMKV.
+
+**Resetting onboarding (dev/QA):** Shake the device — a dialog will appear asking whether to reset. Confirming clears the storage flag and reopens the onboarding flow from the beginning.
+
+- iOS Simulator: `Device > Shake` or `Cmd + Ctrl + Z`
+- Android Emulator: Extended Controls → Virtual sensors → Shake
+
+---
+
+## API
+
+Connected to a dummy REST API: `https://dummy-api-jtg6bessta-ey.a.run.app`
+
+- `GET /categories` — plant categories
+- `GET /questions` — featured questions/guides
+
+State managed via RTK Query.
+
+---
+
+## Testing
+
+```bash
+npm test          # Run all tests once
+npm run test:watch  # Watch mode (re-runs on file change)
+```
+
+Tests live in `src/__tests__/` and use **Jest** (`jest-expo` preset) + **@testing-library/react-native**.
+
+| Test file | What it covers |
+|---|---|
+| `onboarding.data.test.ts` | Data constants (titles, button text, plan options) |
+| `storage.test.ts` | `StorageKeys` values + MMKV get/set behavior |
+| `onboarding-screen.test.tsx` | Step navigation logic (3 steps → `onComplete`) |
+
+Native modules (MMKV, Reanimated, Sensors) are mocked — no device or simulator needed to run tests.
+
+---
+
+## Tech Stack
+
+- **Expo SDK 54** / Expo Router 6
+- **React Native 0.81** (New Architecture enabled)
+- **Redux Toolkit** + RTK Query
+- **React Native Reanimated 4**
+- **MMKV** — persistent storage
+- **expo-sensors** — shake detection
+- **react-native-svg** — SVG icon rendering
